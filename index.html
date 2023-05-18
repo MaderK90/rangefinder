@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" async></script>
     <title>Bluetooth LE Test</title>
 </head>
 <body>
@@ -25,6 +27,17 @@
          
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+    <article>
+        <h2>Install App</h2>
+        <p>Do you want to install the app locally and for offline use?</p>
+        <button data-id="install-yes">Yes</button>
+        <button data-id="install-no">No</button>
+    </article>
+    
 </body>
 </html>

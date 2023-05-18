@@ -1,0 +1,28 @@
+{
+    "name": "Rangefinder",
+    "short_name": "Range",
+    "display": "standalone",
+    "start_url": "./",
+    "scope": "./",
+    "background_color": "#8360c3",
+    "theme_color": "#8360c3",
+    "description": "Simple Rangefinder to measure distance and calculatesruface",
+    "icons": [
+        {
+            "src": "scale.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }, {
+            "src": "scale.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }, {
+            "src": "scale.png",
+            "sizes": "16x16",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
