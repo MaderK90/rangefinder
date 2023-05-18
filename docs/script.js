@@ -16,7 +16,7 @@ document.getElementById("m2Button").addEventListener('pointerdown', measureDista
 
 
 
-/*document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
+document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
 
         console.log("Starting connect");
 
@@ -33,10 +33,10 @@ document.getElementById("m2Button").addEventListener('pointerdown', measureDista
         });
         console.log("Finishing connect");
        
-});*/
+});
 
 
-buttonConnectBLE.addEventListener('pointerup', () => {
+/*buttonConnectBLE.addEventListener('pointerup', () => {
     navigator.bluetooth.requestDevice({
         filters: [{
             services: [SERVICE_UUID]
@@ -50,7 +50,7 @@ buttonConnectBLE.addEventListener('pointerup', () => {
         distanceEl.innerText = error
         button.classList.add("error")
     })
-})
+})*/
 
 
 
