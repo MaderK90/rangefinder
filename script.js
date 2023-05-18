@@ -10,6 +10,7 @@ const m2Element = document.getElementById("m2");
 var myService = null;
 
 document.getElementById("RangeButton").addEventListener('pointerdown', measureDistance);
+document.getElementById("m2Button").addEventListener('pointerdown', measureDistance);
 
 
 document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
@@ -37,9 +38,9 @@ function measureDistance() {
         alert("Connect the Bluetooth service first");
         return;
     }
-    var color = this.getAttribute("color");
-    console.log("Color is:"+color);
-    colorData = new DataView(str2ab(color));
+    //var color = this.getAttribute("color");
+    //console.log("Color is:"+color);
+    //colorData = new DataView(str2ab(color));
     myService.getCharacteristic(RANGE_UUID)
     .then(characteristic => characteristic.writeValue())
     .catch(error => { 
