@@ -1,0 +1,2 @@
+#define SECRET_SSID "ESP32" 
+#define SECRET_PWD "123456" 
