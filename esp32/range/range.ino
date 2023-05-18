@@ -80,7 +80,7 @@ void initBLE() {
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
   pAdvertising->setMinPreferred(0x12);
-  //BLEDevice::startAdvertising();
+  BLEDevice::startAdvertising();
   pServer->getAdvertising()->start();
 
   // Done with the init...
@@ -145,10 +145,6 @@ void checkToReconnect() //added
     oldDeviceConnected = deviceConnected;
   }
 }
-
-
-
-
 
 
 

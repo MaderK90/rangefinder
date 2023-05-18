@@ -8,12 +8,15 @@ const buttonRange = document.getElementById("activateRange");
 const rangeElement = document.getElementById("range");
 const m2Element = document.getElementById("m2");
 var myService = null;
+const buttonConnectBLE = document.getElementById("ButtonConnect");
+
 
 document.getElementById("RangeButton").addEventListener('pointerdown', measureDistance);
 document.getElementById("m2Button").addEventListener('pointerdown', measureDistance);
 
 
-document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
+
+/*document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
 
         console.log("Starting connect");
 
@@ -29,7 +32,26 @@ document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
             console.log(myService);
         });
         console.log("Finishing connect");
-});
+       
+});*/
+
+
+buttonConnectBLE.addEventListener('pointerup', () => {
+    navigator.bluetooth.requestDevice({
+        filters: [{
+            services: [SERVICE_UUID]
+        }]
+    })
+    .then(device => device.gatt.connect())
+    .then(server => server.getPrimaryService(SERVICE_UUID))
+    .then(service => service.getCharacteristic(RANGE_UUID))
+    .then(characteristic => characteristic.startNotifications())
+    .catch(error => { 
+        distanceEl.innerText = error
+        button.classList.add("error")
+    })
+})
+
 
 
 function measureDistance() {
