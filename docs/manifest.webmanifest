@@ -9,17 +9,17 @@
     "description": "Simple Rangefinder to measure distance and calculatesruface",
     "icons": [
         {
-            "src": "scale.png",
+            "src": "icon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
         }, {
-            "src": "scale.png",
+            "src": "icon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         }, {
-            "src": "scale.png",
+            "src": "icon.png",
             "sizes": "16x16",
             "type": "image/png",
             "purpose": "any"

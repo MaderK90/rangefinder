@@ -10,6 +10,8 @@
 #define bleServerName "BLE-Server"
 
 
+
+
 const int trigPin = 5;
 const int echoPin = 18;
 
@@ -45,6 +47,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
     deviceConnected = false;
   }
 };
+
 
 
 void initBLE() {
@@ -150,9 +153,10 @@ void checkToReconnect() //added
 
 void setup() {
   Serial.begin(115200); // Starts the serial communication
+  initBLE();
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
-  initBLE();
+  
 }
 
 void loop() {
