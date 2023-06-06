@@ -1,3 +1,4 @@
+
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -94,8 +95,11 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 
     void onRead(BLECharacteristic *pCharacteristic) {
       float rangeValue = getRangeValue();
+      Serial.print(rangeValue);
 
       pCharacteristic->setValue(rangeValue);
+      
+ 
     }
 
     void onWrite(BLECharacteristic *pCharacteristic) {

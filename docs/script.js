@@ -2,12 +2,15 @@ const SERVICE_UUID = "375bb10c-f55c-11ed-a05b-0242ac120003";
 const RANGE_UUID = "375bb3d2-f55c-11ed-a05b-0242ac120003";
 
 
+
 const buttonRange = document.getElementById("activateRange");
 
 
 const rangeElement = document.getElementById("range");
 const m2Element = document.getElementById("m2");
-var myService = null;
+let myService = null;
+let rangeCharacteristic = null;
+
 const buttonConnectBLE = document.getElementById("ButtonConnect");
 
 
@@ -16,24 +19,44 @@ document.getElementById("m2Button").addEventListener('pointerdown', measureDista
 
 
 
-document.getElementById("ButtonConnect").addEventListener('pointerdown', () => {
+document.getElementById("ButtonConnect").addEventListener('click', async () => {
+    try {
+      console.log("Starting connect");
+      
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: [SERVICE_UUID] }]
+      });
+      
+      const server = await device.gatt.connect();
+      myService = await server.getPrimaryService(SERVICE_UUID);
+      console.log(myService);
+      
+      rangeCharacteristic = await myService.getCharacteristic(RANGE_UUID);
+      rangeCharacteristic.addEventListener('characteristicvaluechanged', handleRangeValueChanged);
+      await rangeCharacteristic.startNotifications();
+      
+      console.log("Connected and subscribed to range notifications");
+    } catch (error) {
+      console.error("Error connecting to BLE device:", error);
+    }
+  });
 
-        console.log("Starting connect");
-
-        navigator.bluetooth.requestDevice({
-            filters: [{
-                services: [SERVICE_UUID]
-            }]
-        })
-        .then(device => device.gatt.connect())
-        .then(server => server.getPrimaryService(SERVICE_UUID))
-        .then(service => {
-            myService = service;
-            console.log(myService);
-        });
-        console.log("Finishing connect");
-       
-});
+  document.getElementById("RangeButton").addEventListener('click', async () => {
+    try {
+      if (!myService) {
+        alert("Connect to the Bluetooth service first");
+        return;
+      }
+      
+      const value = await rangeCharacteristic.readValue();
+      const rangeValue = new DataView(value.buffer).getFloat32(0, true);
+      console.log("Range value:", rangeValue);
+      
+      // Do something with the range value...
+    } catch (error) {
+      console.error("Error reading range value:", error);
+    }
+  });
 
 
 /*buttonConnectBLE.addEventListener('pointerup', () => {
@@ -71,7 +94,7 @@ function measureDistance() {
     });
 }
 
-buttonRange.addEventListener('pointerdown', () => {
+/*buttonRange.addEventListener('pointerdown', () => {
     if (myService == null) {
         alert("Connect the Bluetooth service first");
         return;
@@ -87,7 +110,7 @@ buttonRange.addEventListener('pointerdown', () => {
         temperatureElement.innerText = error
         button.classList.add("error")
     });
-})
+})*/
 
 
 
@@ -97,12 +120,13 @@ buttonRange.addEventListener('pointerdown', () => {
     console.log("Bightness: " + ab2str(value.buffer) + "%");
 }*/
 
-function handleCharacteristicValueChangedRange(event) {
-    const value = event.target.value
-    rangeElement.innerText = "Zentimeter " + ab2str(value.buffer) + "cm";
-    console.log("Zentimeter " + ab2str(value.buffer) + "cm");
+function handleRangeValueChanged(event) {
+    const value = event.target.value;
+    const rangeValue = new DataView(value.buffer).getFloat32(0, true);
+    console.log("Range value changed:", rangeValue);
+    
+    // Do something with the updated range value...
 }
-
 // https://developer.chrome.com/blog/how-to-convert-arraybuffer-to-and-from-string/
 function ab2str(buf) {
     return String.fromCharCode.apply(null, new Uint8Array(buf))
