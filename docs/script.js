@@ -28,6 +28,7 @@ document.getElementById("ButtonConnect").addEventListener("click", async () => {
         services: [SERVICE_UUID] 
         }]
     });
+    alert("nach Request device");
 
     const server = await device.gatt.connect();
     myService = await server.getPrimaryService(SERVICE_UUID);
