@@ -1,4 +1,4 @@
-/*const SERVICE_UUID = "375bb10c-f55c-11ed-a05b-0242ac120003";
+const SERVICE_UUID = "375bb10c-f55c-11ed-a05b-0242ac120003";
 const RANGE_UUID = "375bb3d2-f55c-11ed-a05b-0242ac120003";
 
 
@@ -125,5 +125,5 @@ function str2ab(str) {
       bufView[i] = str.charCodeAt(i);
     }
     return buf;
-}*/
+}
 
