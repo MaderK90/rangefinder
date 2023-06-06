@@ -241,7 +241,7 @@ void setupBLE() {
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(SERVICE_UUID);
     pAdvertising->start();
-    Serial.print("coonection startet...")
+    Serial.print("coonection startet...");
 }
 
 
