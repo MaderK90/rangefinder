@@ -19,7 +19,30 @@ document
   .addEventListener("pointerdown", measureDistance);
 
 document.getElementById("ButtonConnect").addEventListener("click", async () => {
-  try {
+
+  navigator.bluetooth.requestDevice({
+    filters: [{
+        services: [SERVICE_UUID]
+    }]
+})
+    .then(device => {
+        return device.gatt.connect();
+    })
+    .then(server => {
+        return server.getPrimaryService(SERVICE_UUID);
+    })
+    .then(service => {
+        return service.getCharacteristic(RANGE_UUID);
+    })
+    .then(characteristic => characteristic.readValue())
+    .then(result => decodeValues(result))
+    .then(result => document.getElementById("range").innerHTML = result)
+    .catch(error => {
+        console.log('Argh! ' + error);
+    });
+
+
+  /*try {
     console.log("Starting connect");
     alert("Starting connect");
 
@@ -47,7 +70,7 @@ document.getElementById("ButtonConnect").addEventListener("click", async () => {
   } catch (error) {
     console.error("Error connecting to BLE device:", error);
     alert("Error connecting to BLE device:" + error);
-  }
+  }*/
 });
 
 document.getElementById("RangeButton").addEventListener("click", async () => {
