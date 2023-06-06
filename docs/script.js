@@ -19,32 +19,24 @@ document
   .addEventListener("pointerdown", measureDistance);
 
 document.getElementById("ButtonConnect").addEventListener("click", async () => {
-  try {
-    console.log("Starting connect");
-    alert("Starting connect");
+    navigator.bluetooth.requestDevice({
+        filters: [{
+            services: [RANGE_UUID]
+        }]
+    })
+    .then(device => device.gatt.connect())
+    .then(server => server.getPrimaryService(SERVICE_UUID))
+    .then(service => service.getCharacteristic(RANGE_UUID))
+    .then(characteristic => characteristic.startNotifications())
+    .then(characteristic => {
+    characteristic.addEventListener('characteristicvaluechanged',
+                                    handleRangeValueChanged);
+    console.log('Notifications have been started.');
+    })
+    .catch(error => { 
+        alert(error)
+    })
 
-    const device = await navigator.bluetooth.requestDevice({
-      filters: [{ services: [SERVICE_UUID] }],
-    });
-
-    const server = await device.gatt.connect();
-    myService = await server.getPrimaryService(SERVICE_UUID);
-    console.log(myService);
-    alert("Got Service UID");
-
-    rangeCharacteristic = await myService.getCharacteristic(RANGE_UUID);
-    rangeCharacteristic.addEventListener(
-      "characteristicvaluechanged",
-      handleRangeValueChanged
-    );
-    await rangeCharacteristic.startNotifications();
-
-    console.log("Connected and subscribed to range notifications");
-    alert("Connected and subscribed to range notifications");
-  } catch (error) {
-    console.error("Error connecting to BLE device:", error);
-    alert("Error connecting to BLE device:" + error);
-  }
 });
 
 document.getElementById("RangeButton").addEventListener("click", async () => {
