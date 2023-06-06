@@ -27,7 +27,7 @@ document.getElementById("ButtonConnect").addEventListener("click", async () => {
       filters: [{ 
         services: [SERVICE_UUID] 
         }]
-    });
+    }).catch(error=>alert("anderer error"+ error));
     alert("nach Request device");
 
     const server = await device.gatt.connect();

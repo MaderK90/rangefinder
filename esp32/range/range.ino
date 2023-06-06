@@ -156,8 +156,8 @@ void setup() {
 
 void loop() {
 
-  Serial.print(getRangeValue());
-  delay(3000);
+  //Serial.print(getRangeValue());
+  //delay(3000);
   checkToReconnect();
 
  
