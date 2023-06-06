@@ -20,10 +20,10 @@ document.getElementById("m2Button").addEventListener('pointerdown', measureDista
 
 
 
-document.getElementById("ButtonConnect").addEventListener('click', async () => {
+document.getElementById("ButtonConnect").addEventListener('pointerdown', async () => {
     try {
       console.log("Starting connect");
-      infoText.innerHTML="Starting connect";
+      alert("Starting connect");
       
       const device = await navigator.bluetooth.requestDevice({
         filters: [{ services: [SERVICE_UUID] }]
@@ -32,17 +32,17 @@ document.getElementById("ButtonConnect").addEventListener('click', async () => {
       const server = await device.gatt.connect();
       myService = await server.getPrimaryService(SERVICE_UUID);
       console.log(myService);
-      infoText.innerHTML="Got Service UID";
+      alert("Got Service UID");
       
       rangeCharacteristic = await myService.getCharacteristic(RANGE_UUID);
       rangeCharacteristic.addEventListener('characteristicvaluechanged', handleRangeValueChanged);
       await rangeCharacteristic.startNotifications();
       
       console.log("Connected and subscribed to range notifications");
-      infoText.innerHTML="Connected and subscribed to range notifications";
+      alert("Connected and subscribed to range notifications");
     } catch (error) {
       console.error("Error connecting to BLE device:", error);
-      infoText.innerHTML="Error connecting to BLE device:" + error;
+      alert("Error connecting to BLE device:" + error);
       
     }
   });
