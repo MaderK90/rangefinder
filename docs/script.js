@@ -32,7 +32,7 @@ document.getElementById("ButtonConnect").addEventListener("click", async () => {
         return server.getPrimaryService(SERVICE_UUID);
     })
     .then(service => {
-        return service.getCharacteristic(RANGE_UUID);
+        return service.getCharacteristics();
     })
     .then(characteristic => characteristic.readValue())
     .then(result => decodeValues(result))
