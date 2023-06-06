@@ -1,4 +1,3 @@
-
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -29,6 +28,25 @@ long duration;
 float distanceCm;
 float distanceInch;
 
+float getRangeValue(){
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate the distance
+  distanceCm = duration * SOUND_SPEED/2;
+  Serial.print("Distance (cm): ");
+  Serial.println(distanceCm);
+
+  return distanceCm;
+}
 
 BLECharacteristic characteristicRange(
     RANGE_UUID,
@@ -46,6 +64,19 @@ class MyServerCallbacks: public BLEServerCallbacks {
     deviceConnected = false;
   }
 };
+class MyCallbacks: public BLECharacteristicCallbacks {
+
+    void onRead(BLECharacteristic *pCharacteristic) {
+      float rangeValue = getRangeValue();
+      Serial.print(rangeValue);
+      pCharacteristic->setValue(rangeValue);
+    }
+
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      getRangeValue();
+    }
+};
+
 
 
 
@@ -82,55 +113,16 @@ void initBLE() {
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
   pAdvertising->setMinPreferred(0x12);
-  BLEDevice::startAdvertising();
+  //BLEDevice::startAdvertising();
   pServer->getAdvertising()->start();
 
   // Done with the init...
   Serial.println("Waiting a client connection to notify...");
 }
 
-class MyCallbacks: public BLECharacteristicCallbacks {
-
-    void onRead(BLECharacteristic *pCharacteristic) {
-      float rangeValue = getRangeValue();
-      Serial.print(rangeValue);
-
-      pCharacteristic->setValue(rangeValue);
-      
- 
-    }
-
-    void onWrite(BLECharacteristic *pCharacteristic) {
-      
-      getRangeValue();
-
-    }
-};
 
 
-float getRangeValue(){
 
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
-  
-  // Calculate the distance
-  distanceCm = duration * SOUND_SPEED/2;
-  Serial.print("Distance (cm): ");
-  Serial.println(distanceCm);
-
-  return distanceCm;
-
-  
-
-
-}
 
 
 void checkToReconnect() //added
@@ -155,15 +147,18 @@ void checkToReconnect() //added
 
 void setup() {
   Serial.begin(115200); // Starts the serial communication
-  initBLE();
+  
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  pinMode(echoPin, INPUT); 
+  initBLE();// Sets the echoPin as an Input
   
 }
 
 void loop() {
 
+  Serial.print(getRangeValue());
+  delay(3000);
   checkToReconnect();
+
  
 }
-
