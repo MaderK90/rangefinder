@@ -1,5 +1,5 @@
 
-#include <BLEDevice.h>
+/*#include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
@@ -187,4 +187,106 @@ void loop() {
   //Serial.println(distanceCm);
   
   //delay(1000);
+}*/
+
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include <BLE2902.h>
+
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+
+
+const int trigPin = 5;
+const int echoPin = 18;
+
+
+
+
+#define SOUND_SPEED 0.034
+#define CM_TO_INCH 0.393701
+
+long duration;
+float distanceCm;
+float distanceInch;
+
+BLEServer *pServer;
+BLECharacteristic *pCharacteristic;
+bool deviceConnected = false;
+uint8_t sensorValue = 0;
+
+class MyServerCallbacks : public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+        deviceConnected = true;
+    }
+
+    void onDisconnect(BLEServer* pServer) {
+        deviceConnected = false;
+    }
+};
+
+void setupBLE() {
+    BLEDevice::init("ESP32");
+    pServer = BLEDevice::createServer();
+    pServer->setCallbacks(new MyServerCallbacks());
+    BLEService *pService = pServer->createService(SERVICE_UUID);
+    pCharacteristic = pService->createCharacteristic(
+                        CHARACTERISTIC_UUID,
+                        BLECharacteristic::PROPERTY_READ |
+                        BLECharacteristic::PROPERTY_NOTIFY
+                      );
+    pCharacteristic->addDescriptor(new BLE2902());
+    pService->start();
+    BLEAdvertising *pAdvertising = pServer->getAdvertising();
+    pAdvertising->addServiceUUID(SERVICE_UUID);
+    pAdvertising->start();
+}
+
+
+float getRangeValue(){
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate the distance
+  distanceCm = duration * SOUND_SPEED/2;
+  Serial.print("Distance (cm): ");
+  Serial.println(distanceCm);
+
+  return distanceCm;
+
+  
+
+
+}
+
+void setup() {
+    Serial.begin(115200);
+    setupBLE();
+}
+
+void loop() {
+    if (deviceConnected) {
+        // Hier kannst du den Code zur Auslesung des Ultraschallsensors einfügen
+        // und den Wert in der Variable "sensorValue" speichern.
+        // Beispiel: sensorValue = readUltrasonicSensor(
+  
+
+  
+  
+        delay(1000);
+        float distanceCm=getRangeValue();
+        // Den Wert über BLE an den Webclient senden
+        pCharacteristic->setValue(distanceCm);
+        pCharacteristic->notify();
+        delay(1000); // Wartezeit zwischen den Benachrichtigungen an den Webclient
+    }
 }
