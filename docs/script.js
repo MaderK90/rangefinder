@@ -12,6 +12,7 @@ let myService = null;
 let rangeCharacteristic = null;
 
 const buttonConnectBLE = document.getElementById("ButtonConnect");
+const infoText = document.getElementById("Infotext");
 
 
 document.getElementById("RangeButton").addEventListener('pointerdown', measureDistance);
@@ -22,6 +23,7 @@ document.getElementById("m2Button").addEventListener('pointerdown', measureDista
 document.getElementById("ButtonConnect").addEventListener('click', async () => {
     try {
       console.log("Starting connect");
+      infoText.innerHTML="Starting connect";
       
       const device = await navigator.bluetooth.requestDevice({
         filters: [{ services: [SERVICE_UUID] }]
@@ -30,14 +32,18 @@ document.getElementById("ButtonConnect").addEventListener('click', async () => {
       const server = await device.gatt.connect();
       myService = await server.getPrimaryService(SERVICE_UUID);
       console.log(myService);
+      infoText.innerHTML="Got Service UID";
       
       rangeCharacteristic = await myService.getCharacteristic(RANGE_UUID);
       rangeCharacteristic.addEventListener('characteristicvaluechanged', handleRangeValueChanged);
       await rangeCharacteristic.startNotifications();
       
       console.log("Connected and subscribed to range notifications");
+      infoText.innerHTML="Connected and subscribed to range notifications";
     } catch (error) {
       console.error("Error connecting to BLE device:", error);
+      infoText.innerHTML="Error connecting to BLE device:" + error;
+      
     }
   });
 
@@ -51,10 +57,12 @@ document.getElementById("ButtonConnect").addEventListener('click', async () => {
       const value = await rangeCharacteristic.readValue();
       const rangeValue = new DataView(value.buffer).getFloat32(0, true);
       console.log("Range value:", rangeValue);
+      infoText.innerHTML="Range value" + rangeValue;
       
       // Do something with the range value...
     } catch (error) {
       console.error("Error reading range value:", error);
+      infoText.innerHTML="Error reading range value:", error;
     }
   });
 
@@ -94,7 +102,7 @@ function measureDistance() {
     });
 }
 
-/*buttonRange.addEventListener('pointerdown', () => {
+buttonRange.addEventListener('pointerdown', () => {
     if (myService == null) {
         alert("Connect the Bluetooth service first");
         return;
@@ -110,7 +118,7 @@ function measureDistance() {
         temperatureElement.innerText = error
         button.classList.add("error")
     });
-})*/
+})
 
 
 
