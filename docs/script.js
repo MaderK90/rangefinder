@@ -20,11 +20,11 @@ document.getElementById("m2Button").addEventListener('pointerdown', measureDista
 
 
 
-document.getElementById("ButtonConnect").addEventListener('pointerdown', async () => {
+document.getElementById("ButtonConnect").addEventListener('click', async () => {
     try {
       console.log("Starting connect");
       alert("Starting connect");
-      
+
       const device = await navigator.bluetooth.requestDevice({
         filters: [{ services: [SERVICE_UUID] }]
       });
