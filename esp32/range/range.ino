@@ -7,7 +7,7 @@
 #undef VERBOSE
 
 //BLE server name
-#define bleServerName "BLE-Server"
+#define bleServerName "BLE Server Kathi"
 
 
 const int trigPin = 5;
@@ -20,6 +20,13 @@ bool oldDeviceConnected = false;
 #define RANGE_UUID "375bb3d2-f55c-11ed-a05b-0242ac120003"
 
 BLEServer *pServer = NULL;
+
+
+                                       
+BLECharacteristic rangeCharacteristic(
+      RANGE_UUID, 
+      BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_READ);
+
 
 #define SOUND_SPEED 0.034
 #define CM_TO_INCH 0.393701
@@ -48,10 +55,7 @@ float getRangeValue(){
   return distanceCm;
 }
 
-BLECharacteristic characteristicRange(
-    RANGE_UUID,
-    BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_READ
-);
+
 
 class MyServerCallbacks: public BLEServerCallbacks {
 
@@ -67,13 +71,16 @@ class MyServerCallbacks: public BLEServerCallbacks {
 class MyCallbacks: public BLECharacteristicCallbacks {
 
     void onRead(BLECharacteristic *pCharacteristic) {
-      float rangeValue = getRangeValue();
-      Serial.print(rangeValue);
-      pCharacteristic->setValue(rangeValue);
+      //std::__cxx11::string value = pCharacteristic->getValue();
+      //Serial.println(value);
+      //float rangeValue = getRangeValue();
+      //Serial.print(rangeValue);
+      //pCharacteristic->setValue(42);
     }
 
     void onWrite(BLECharacteristic *pCharacteristic) {
-      getRangeValue();
+      //std::__cxx11::string value = pCharacteristic->getValue();
+      //Serial.println(value.c_str());
     }
 };
 
@@ -81,43 +88,28 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 
 
 void initBLE() {
-  // 1. Create the BLE Device  
-  BLEDevice::init(bleServerName);
 
-  // 2. Create the BLE Server
-  pServer = BLEDevice::createServer();
+
+
+  BLEDevice::init(bleServerName);
+  
+  
+  BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
-  // 3. Create the BLE Service to which all the characteristics of the service are bound
+ 
   BLEService *pService = pServer->createService(SERVICE_UUID);
-
-  // 4. Create all the characeristics of the service, which represent the functionality
+  pService->addCharacteristic(&rangeCharacteristic);
   
-  // ---- b) Definition of the BLE RANGE characteristic -------------------------
-
-  pService->addCharacteristic(&characteristicRange);
-  // BLE descriptor for the textual description of the service
-  BLEDescriptor myRangeDescriptor(BLEUUID((uint16_t)0x2901));
-  myRangeDescriptor.setValue("Range in meters");
-  characteristicRange.addDescriptor(&myRangeDescriptor);
-  // BLE-descriptor for the indication of the status of the notification (On/Off)
-  BLEDescriptor myRangeNotificationDescriptor(BLEUUID((uint16_t)0x2902));  
-  characteristicRange.addDescriptor(&myRangeNotificationDescriptor);
-
-
-  // 5. Start the service on the server
+  rangeCharacteristic.setCallbacks(new BLECharacteristicCallbacks());
+  rangeCharacteristic.setValue("Hello World");
+  pServer->getAdvertising()->addServiceUUID(SERVICE_UUID);
   pService->start();
-
-  // 6. Start advertising of the service, after that clients can detect the service
-  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-  pAdvertising->addServiceUUID(SERVICE_UUID);
-  pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
-  pAdvertising->setMinPreferred(0x12);
-  //BLEDevice::startAdvertising();
+  
+ 
   pServer->getAdvertising()->start();
 
-  // Done with the init...
-  Serial.println("Waiting a client connection to notify...");
+  Serial.println("Services are started and being advertised...");
 }
 
 
@@ -146,19 +138,37 @@ void checkToReconnect() //added
 
 
 void setup() {
-  Serial.begin(115200); // Starts the serial communication
+  Serial.begin(115200);
+  initBLE(); // Starts the serial communication
   
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); 
-  initBLE();// Sets the echoPin as an Input
+  
   
 }
+uint8_t simulated_battery_level = 50;
 
 void loop() {
 
   //Serial.print(getRangeValue());
   //delay(3000);
-  checkToReconnect();
+  /*int value=42;
+  rangeCharacteristic.setValue(value);
+  rangeCharacteristic.notify();
+  delay(5000);
+  checkToReconnect();*/
+
+  //rangeCharacteristic.setValue(&simulated_battery_level,1); //changing the value
+  //rangeCharacteristic.notify(); // ..notifying clients that 
+  delay(5000); // wait 5 sec.
+
+  simulated_battery_level = simulated_battery_level + 10; // increase the level up to 100 before setting to 0 again
+  Serial.println(int(simulated_battery_level));
+
+  if (int(simulated_battery_level) == 100)
+    simulated_battery_level=0;
+
+
 
  
 }

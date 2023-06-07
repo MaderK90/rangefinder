@@ -53,7 +53,7 @@ document.getElementById("ButtonConnect").addEventListener("click", async () => {
     }).catch(error=>alert("anderer error"+ error));
     alert("nach Request device");
 
-    let server = await device.gatt.connect();
+    const server = await device.gatt.connect();
     alert("Gattserver"+server);
     console.log("Gattserver"+ server);
     myService = await server.getPrimaryService(SERVICE_UUID);
