@@ -54,7 +54,8 @@ document.getElementById("ButtonConnect").addEventListener("click", async () => {
     alert("nach Request device");
 
     const server = await device.gatt.connect();
-    alert(server);
+    alert("Gattserver"+server);
+    console.log("Gattserver"+ server);
     myService = await server.getPrimaryService(SERVICE_UUID);
     console.log(myService);
     alert("Got Service UID");
