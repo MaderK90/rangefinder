@@ -71,7 +71,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 class MyCallbacks: public BLECharacteristicCallbacks {
 
     void onRead(BLECharacteristic *pCharacteristic) {
-      //std::__cxx11::string value = pCharacteristic->getValue();
+      std::__cxx11::string value = pCharacteristic->getValue();
       //Serial.println(value);
       //float rangeValue = getRangeValue();
       //Serial.print(rangeValue);
@@ -158,8 +158,8 @@ void loop() {
   delay(5000);
   checkToReconnect();*/
 
-  //rangeCharacteristic.setValue(&simulated_battery_level,1); //changing the value
-  //rangeCharacteristic.notify(); // ..notifying clients that 
+  rangeCharacteristic.setValue(&simulated_battery_level,1); //changing the value
+  rangeCharacteristic.notify(); // ..notifying clients that 
   delay(5000); // wait 5 sec.
 
   simulated_battery_level = simulated_battery_level + 10; // increase the level up to 100 before setting to 0 again
